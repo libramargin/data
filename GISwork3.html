@@ -1,0 +1,376 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>全球地震分析</title>
+
+    <style>
+        html,
+        body,
+        html,
+        body,
+        #viewDiv {
+        	padding: 0;
+        	margin: 0;
+        	height: 100%;
+        	width: 100%;
+			z-index: -1;
+        }
+		#infoDiv {
+		        padding: 8px;
+		}
+		#picture{
+			position: fixed;
+			bottom: 3%;
+			right: 0%;
+		}
+		
+		
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.23/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.23/"></script>
+	
+
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/MapView",
+            "esri/layers/FeatureLayer",
+            "esri/config",
+			"esri/layers/GeoJSONLayer",
+			"esri/smartMapping/renderers/color",
+			"esri/smartMapping/statistics/histogram",
+			"esri/widgets/smartMapping/ClassedColorSlider",
+			"esri/widgets/Legend",
+			"esri/widgets/BasemapToggle",
+			"esri/core/watchUtils",
+			"esri/Graphic"
+			], function (Map, 
+			MapView, 
+			FeatureLayer, 
+			esriConfig, 
+			GeoJSONLayer, 
+			colorRendererCreator,
+			histogram,
+			ClassedColorSlider,
+			Legend,
+			BasemapToggle,
+			watchUtils,
+			Graphic
+			) {
+
+                esriConfig.apiKey = "AAPK56e3ac027f044c4089d8ceec232fc05dYaOuzVRzm8tMRqvzOvDvIEevbqJ85yppn9PacU6cy4duurJrVK9wo_8BcWO8i8bi";
+                
+				let fieldSelect, classSelect, numClassesInput, slider;
+				//创建一个作为2D主视图
+                var map = new Map({
+                	basemap: "arcgis-topographic"//topo-vector,satellite,oceans,osm,gray-vector,dark-gray-vector,streets-vector
+                });
+				 
+                var view = new MapView({
+                	map: map,
+                	center:[102, 35.027],
+                	zoom: 4,
+                	container: "viewDiv"
+                });
+				
+				const provincesymbol = {
+					type: "simple-fill",
+					color: null,
+					outline: {
+						color: "#30ffea",
+						width: "0.5px",
+						style: "solid"
+					}
+					
+				}
+				const provincerederer = {
+					type: "simple",
+					symbol: provincesymbol
+				}
+				const JSONlayer = new GeoJSONLayer({
+					url: "https://cxqttkl.github.io/web4gis15/China_No_Area.geojson",
+					title: "中国省份",
+					renderer: provincerederer
+				});
+				JSONlayer.outFields = ["*"];
+				map.add(JSONlayer);
+				
+                //地震图层
+                var layer = new GeoJSONLayer({
+					title: "Earthquakes",
+					url: 'https://a.amap.com/Loca/static/loca-v2/demos/mock_data/earthquake.json',
+					popupTemplate: {
+						// autocast as esri/PopupTemplate
+						title: "Block Group {FID_Block_Group}",
+						content: [
+						  {
+							type: "fields",
+							fieldInfos: [
+							  {
+								fieldName: "level",
+								label: "地震等级",
+								format: {
+								digitSeparator: true,//分隔符
+								places: 1//小数位数
+								}
+							  },
+							  {
+								fieldName: "depth",
+								label: "地震深度",
+								format: {
+								  digitSeparator: true,
+								  places: 1
+								}
+							  },
+							  {
+								fieldName: "addr",
+								label: "发生地点",
+								format: {
+								  digitSeparator: true,//分隔符
+								  //places: 1//小数位数
+								}
+							  },
+							  {
+								fieldName: "time",
+								label: "发生时间",
+								format: {
+								  digitSeparator: true,//分隔符
+								  //places: 1//小数位数
+								}
+							  }
+							]
+						  }
+						]
+					  },
+					//definitionExpression: "EDUCBASECY > 0"
+				});
+                //map.add(layer);
+				//添加图例
+				view.ui.add(
+					new Legend({
+						view: view
+					}),
+					"bottom-left"
+				);
+				//底图切换
+				const basemapToggle = new BasemapToggle({
+					view: view,
+					nextBasemap: "gray-vector"
+				});
+				view.ui.add(basemapToggle, "top-left");
+				basemapToggle.on("toggle", generateRenderer);
+				
+				view.ui.add("infoDiv", "top-right");
+				// Generate a new renderer each time the user changes an input parameter
+				view.when().then(() => {
+					fieldSelect = document.getElementById("field-select");
+					fieldSelect.addEventListener("change", generateRenderer);
+		
+					classSelect = document.getElementById("class-select");
+					classSelect.addEventListener("change", generateRenderer);
+		
+					numClassesInput = document.getElementById("num-classes");
+					numClassesInput.addEventListener("change", generateRenderer);
+		
+					watchUtils.whenFalseOnce(view, "updating", generateRenderer);
+				});
+				
+				// Generate rounded arcade expression when user
+				// selects a field name
+				function getValueExpression(field) {
+					if (field == "depth"){
+						return (
+							"Round( ( $feature." + field + " / $feature.level) , 1)"
+						)
+					}
+					if (field == "level"){
+						return (
+							"Round( ( $feature." + field + " / $feature.depth) , 1)"
+						)
+					}
+				}
+				
+				function generateRenderer() {
+				  const fieldLabel =
+					fieldSelect.options[fieldSelect.selectedIndex].text;
+				  // default to natural-breaks when manual is selected for classification method
+				  const classificationMethod =
+					classSelect.value === "manual"
+					  ? "natural-breaks"
+					  : classSelect.value;
+		
+				  const params = {
+					layer: layer,
+					valueExpression: getValueExpression(fieldSelect.value),
+					view: view,
+					classificationMethod: classificationMethod,
+					numClasses: parseInt(numClassesInput.value),
+					legendOptions: {
+					  title: fieldLabel
+					}
+				  };
+				  
+				  // generate the renderer and set it on the layer 
+				  colorRendererCreator
+					  .createClassBreaksRenderer(params)
+					  .then((rendererResponse) => {
+						layer.renderer = rendererResponse.renderer;
+		  
+						if (!map.layers.includes(layer)) {
+						  map.add(layer);
+						}
+		  
+						if (classSelect.value === "manual") {
+						  // if manual is selected, then add or update
+						  // a classed color slider to allow the user to
+						  // construct manual class breaks
+						  updateColorSlider(rendererResponse);
+						} else {
+						  destroySlider();
+						}
+					  });
+					}
+					// If manual classification method is selected, then create
+					// a classed color slider to allow user to manually modify
+					// the class breaks starting with the generated renderer
+			
+					function updateColorSlider(rendererResult) {
+					  histogram({
+						layer: layer,
+						valueExpression: getValueExpression(fieldSelect.value),
+						view: view,
+						numBins: 100
+					  }).then((histogramResult) => {
+						if (!slider) {
+						  const sliderContainer = document.createElement("div");
+						  const container = document.createElement("div");
+						  container.id = "containerDiv";
+						  container.appendChild(sliderContainer);
+						  view.ui.add(container, "top-right");
+			
+						  slider = ClassedColorSlider.fromRendererResult(
+							rendererResult,
+							histogramResult
+						  );
+						  slider.container = container;
+						  slider.viewModel.precision = 1;
+			
+						  function changeEventHandler() {
+							const renderer = layer.renderer.clone();
+							renderer.classBreakInfos = slider.updateClassBreakInfos(
+							  renderer.classBreakInfos
+							);
+							layer.renderer = renderer;
+						  }
+			
+						  slider.on(
+							["thumb-change", "thumb-drag", "min-change", "max-change"],
+							changeEventHandler
+						  );
+						} else {
+						  slider.updateFromRendererResult(rendererResult, histogramResult);
+						}
+					  });
+					}
+			
+					function destroySlider() {
+					  if (slider) {
+						let container = document.getElementById("containerDiv");
+						view.ui.remove(container);
+						slider.container = null;
+						slider = null;
+						container = null;
+					  }
+					}
+					view.on("click", function(evt){
+						
+						if (evt.button == 2) {
+							view.graphics.removeAll();
+							let query = JSONlayer.createQuery();
+							query.geometry = view.toMap(evt); // the point location of the pointer
+							query.distance = 2;
+							query.units = "miles";
+							query.spatialRelationship = "intersects";
+							query.returnGeometry = true;
+							query.outFields = ["*"];
+							JSONlayer.queryFeatures(query).then(function(abc){
+								abc.features.forEach(function(item){
+									var g = new Graphic({
+										geometry: item.geometry,
+										attributes: item.attributes,
+										symbol: {
+											type: "simple-fill",
+											color: [100, 100, 0, 0.5]
+										}
+									});
+									//view.graphics.add(g);
+									
+									let query1 = layer.createQuery();
+									query1.geometry = item.geometry; // the point location of the pointer
+									query1.spatialRelationship = "intersects";
+									query1.returnGeometry = true;
+									query1.outFields = ["*"];
+									//query1.outStatistics = statDefinitions;
+									// view.graphics.add(buffer);
+									layer.queryFeatures(query1).then(function(earth){
+										earth.features.forEach(function(earthquake){
+											var gg = new Graphic({
+												geometry: earthquake.geometry,
+												attributes: earthquake.attributes,
+												symbol: {
+													type: "simple-marker",
+													color: [0, 245, 255, 0.9],
+													size: 10,
+													outline: null
+												}
+											});
+											//const points = geometryEngine.intersects(buffer.geometry, earthquake.geometry);
+											view.graphics.add(gg);
+										});
+									});
+									
+									alert(item.attributes["PROV"]);
+									
+								});
+							});
+							
+						};
+					});
+            });
+    </script>
+
+</head>
+
+<body>
+	<div id="viewDiv"></div>
+	<div id="picture">
+		<img src="https://raw.githubusercontent.com/libramargin/data/main/a08b87d6277f9e2fb0ad7ae41130e924b999f346.png" width="346" height="191" />
+	</div>
+	<div id="infoDiv" class="esri-widget">
+	      Select Field:
+	      <select id="field-select" class="esri-widget">
+	        <option value="level" >地震等级</option>
+	        <option value="depth" selected>地震深度</option>
+	      </select>
+	      Classification:
+	      <select id="class-select" class="esri-widget">
+	        <option value="equal-interval" selected>Equal interval</option>
+	        <option value="quantile">Quantile</option>
+	        <option value="natural-breaks">Natual Breaks</option>
+	        <option value="manual">Manual</option>
+	      </select>
+	      Breaks:
+	      <input
+	        type="number"
+	        id="num-classes"
+	        class="esri-widget"
+	        value="5"
+	        min="2"
+	        max="10"
+	      />
+	    </div>
+</body>
+
+</html>
