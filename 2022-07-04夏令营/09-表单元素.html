@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 
+        表单属性：action:收集数据的提交地址(URL)：默认使用GET方式
+                 method:提交的方式（GET/POST）
+    -->
+    <form action="" method="get">
+        <!-- 发现httppost请求目标网站会出现405 状态码，原因为 Apache、IIS、Nginx等绝大多数web服务器，都不允许静态文件响应POST请求 -->
+        <!-- 表单控件 -->
+        用户名：<input type="text" name="username"/> <br/>
+        密码：<input type="password" name="password"/> <br/>
+        性别：<input type="radio" name="gender" id="male" value="male"/>
+        <label for="male">男</label>
+        <input type="radio" name="gender" id="female" value="female"/>
+        <!-- label for: 点击文字也可以选择 -->
+        <label for="female">女</label><br/>
+        爱好：<input type="checkbox" name="hobbies" value="eat"/> 吃饭
+        <input type="checkbox" name="hobbies" value="sleep"/> 睡觉
+        <input type="checkbox" name="hobbies" value="play"/> 玩儿
+        <br>
+        城市：
+        <!-- select:下拉框 -->
+        <select name="city" id="">
+            <!-- option:选项 -->
+            <option value="wuhan">武汉</option>
+            <option value="chengdu">成都</option>
+            <option value="fujian">福建</option>
+        </select><br/>
+        个性签名：
+        <textarea name="desc" >山外还有山比山高</textarea>
+        <!-- 旧的写法 -->
+        <input type="button" value="按钮">
+        <!-- 新的写法 -->
+        <button>按钮</button>
+        <!-- 提交按钮 -->
+        <input type="submit" value="提交">
+    </form>
+</body>
+</html>
