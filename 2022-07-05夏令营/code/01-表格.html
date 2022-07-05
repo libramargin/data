@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>表格的使用</title>
+</head>
+<body>
+    <table width="600px" border="1" cellspacing="0">
+        <caption>狮子中心校课程表</caption>
+        <!-- tr:行，table row -->
+        <tr>
+            <!-- 快速向下复制：Alt+Shift+⬇ -->
+            <th>周一</th>
+            <th>周二</th>
+            <th>周三</th>
+            <th>周四</th>
+            <th>周五</th>
+        </tr>
+        <tr>
+            <td colspan="2">数学</td>
+            <!-- colspan:列合并，数字代表合并的列数 -->
+            <!-- <td>数学</td> -->
+            <td>数学</td>
+            <td>数学</td>
+            <td>数学</td>
+        </tr>
+        <tr>
+            <td>语文</td>
+            <td>语文</td>
+            <td>语文</td>
+            <td>语文</td>
+            <td>语文</td>
+        </tr>
+        <tr>
+            <td>英语</td>
+            <td>英语</td>
+            <td>英语</td>
+            <td rowspan="2">英语</td>
+            <!-- 行合并：rowspan,数字代表合并的行数 -->
+            <td>英语</td>
+        </tr>
+        <tr>
+            <td>物理</td>
+            <td>物理</td>
+            <td>物理</td>
+            <!-- <td>物理</td> -->
+            <td>物理</td>
+        </tr>
+    </table>
+</body>
+</html>
