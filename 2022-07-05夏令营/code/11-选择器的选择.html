@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择器选择练习</title>
+    <style>
+        /* 原则：尽量使用类选择器，三层结构确定元素 */
+        .top-nav a {
+            color: orange;
+        }
+        .side-nav .right a {
+            color: red;
+        }
+        .side-nav .right a:hover {
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主导航栏 -->
+    <nav class="top-nav">
+        <ul>
+        <li><a href="#">公司首页</a></li>
+        <li><a href="#">公司简介</a></li>
+        <li><a href="#">公司产品</a></li>
+        <li><a href="#">联系我们</a></li>
+        </ul>
+    </nav>
+    <!-- 侧导航栏 -->
+    <aside class="side-nav">
+        <div class="left">左侧侧导航栏</div>
+        <div class="right"><a href="#">登录</a></div>
+    </aside>
+</body>
+</html>

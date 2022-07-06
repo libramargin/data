@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>综合案例</title>
+    <style>
+        .tac {
+            /* 多个地方对齐，单独写一个类 */
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: normal;
+        }
+        .date {
+            color: #ccc;
+        }
+        .author {
+            text-decoration: underline;
+            color: #990000;
+        }
+        input {
+            color: #f00;
+        }
+        button {
+            color: green;
+            font-weight: 700;
+        }
+        a {
+            color: #00f;
+            /* 删除下划线 */
+            text-decoration: none;
+        }
+        p {
+            /* 相对于本文字体首行缩进两个空格 */
+            /* em:父元素font-size的值，是相对单位 */
+            text-indent: 2em;
+            line-height: 26px;
+        }
+        /* 优化：三级命名方式 */
+
+        /* 老师代码：自己不足在于三级命名方式，应该要增加代码的准确性 */
+        /* .tac {
+        text-align: center;
+      }
+      article .title {
+        font-size: 28px;
+        font-weight: 400;
+      }
+      article .sub-title .date {
+        color: #ccc;
+      }
+      article .sub-title .author {
+        color: #990000;
+        text-decoration: underline;
+      }
+      article .sub-title a {
+        color: rgb(0, 0, 255);
+        text-decoration: none;
+      }
+      article .sub-title input {
+        color: #f00;
+      }
+      article .sub-title button {
+        color: green;
+        font-weight: 700;
+      }
+      article p {
+        /* em: 父元素的font-size的值 */
+        /* text-indent: 2em;
+        line-height: 26px;
+      } */ 
+    </style>
+  </head>
+  <body>
+    <article>
+      <h1 class="title tac">加强反垄断监管是为了更好发展</h1>
+      <div class="sub-title tac">
+        <span class="date">2020年12月20日</span>
+        <span class="author">腾讯新闻 （20人参与）</span>
+        <a href="">收藏本文</a>
+        <input type="text" value="请输入查询条件" />
+        <button>搜索</button>
+      </div>
+      <!-- hr水平线 -->
+      <hr />
+      <p>
+        <!-- 自动折行：Alt+Z -->
+        近日，市场监管总局根据举报，在前期核查研究的基础上，对阿里巴巴集团控股有限公司实施“二选一”等涉嫌垄断行为立案调查。这是我国在互联网领域加强反垄断监管的一项重要举措，有利于规范行业秩序、促进平台经济长远健康发展。
+      </p>
+      <p>
+        近年来，我国线上经济蓬勃发展，新业态、新模式层出不穷，对推动经济高质量发展、满足人民日益增长的美好生活需要发挥了重要作用。但与此同时，线上经济凭借数据、技术、资本优势也呈现市场集中度越来越高的趋势，市场资源加速向头部平台集中，关于平台垄断问题的反映和举报日益增加，显示线上经济发展中存在一些风险和隐患。近期召开的中央政治局会议和中央经济工作会议均明确要求强化反垄断和防止资本无序扩张，得到社会热烈反响和广泛支持。可见，反垄断已成为关系全局的紧迫议题。
+      </p>
+    </article>
+  </body>
+</html>

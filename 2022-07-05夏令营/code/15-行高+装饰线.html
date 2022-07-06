@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行高</title>
+    <style>
+        body {
+            font-size: 30px;
+        }
+        div {
+            height: 40px;
+            /* line-height:设置单行文本垂直居中，行高=高度，即line-height=heights */
+            line-height: 40px;
+            background-color: skyblue;
+        }
+        span {
+            color: blue;
+            /* 下划线，区分链接 */
+            text-decoration: underline;
+            /* 鼠标样式 */
+            cursor: pointer;
+        }
+        .del {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <!-- div元素：块元素（display: block,宽度跟父元素一样宽） -->
+    <!-- 块元素（display: block）：独占一行，可以设置宽度和高度,如div -->
+    <div>div</div>
+    <!-- 行元素（display: inline）：跟其他行元素共占一行，设置宽高不生效,如span -->
+    <span>span1</span>
+    <span>span2</span>
+    <h1 class="del">998</h1>
+    <h1>9.8</h1>
+</body>
+</html>

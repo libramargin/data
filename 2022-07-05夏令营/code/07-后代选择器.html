@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后代选择器</title>
+    <style>
+        /* 优先级：003 */
+        nav ul li {
+            color: red;
+        }
+        /* 优先级：012,前面级数越高越优先 */
+        nav ul .blue {
+            color: blue;
+        }
+        ol li {
+            color: darkcyan;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主导航：nav>ul>li*5>lorem1 -->
+    <nav>
+        <ul>
+            <li>Lorem.</li>
+            <li>Necessitatibus.</li>
+            <li>Obcaecati.</li>
+            <li class="blue">Ut!</li>
+            <li>Soluta?</li>
+        </ul>
+    </nav>
+
+    <!-- 新闻列表：nav>ul>li*3>lorem3 -->
+
+    <ul>
+        <li>Lorem, ipsum dolor.</li>
+        <li>Aspernatur, laborum nostrum.</li>
+        <li>Unde, quod amet!</li>
+    </ul>
+
+    <!-- 有序列表 -->
+    <ol>
+        <li>Lorem.</li>
+        <li>Ratione!</li>
+        <li>Nihil.</li>
+    </ol>
+</body>
+</html>

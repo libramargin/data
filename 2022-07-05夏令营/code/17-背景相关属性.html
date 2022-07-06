@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景相关属性</title>
+    <style>
+        div {
+            /* 注意：设置背景颜色的元素必须有宽高 */
+            /* background-color: #ff0; */
+            /* 设置半透明效果 */
+            background-color: rgba(255, 255, 0, 0.2);
+        }
+        div:nth-of-type(2){
+            width: 200px;
+            height: 200px;
+            background-image: url(./images/money.jpg);
+        }
+        div:nth-of-type(3){
+            width: 300px;
+            height: 300px;
+            background-color: skyblue;
+            background-image: url(./images/money.jpg);
+            background-repeat: repeat-y;
+        }
+    </style>
+</head>
+<body>
+    <h1>背景颜色</h1>
+    <div>111</div>
+    <h2>背景图片</h2>
+    <!-- ①图片比div小；②图片和div一样大；③图片比div大 -->
+    <div class="images"></div>
+    <div class="images"></div>
+    <div class="images"></div>
+    
+</body>
+</html>
