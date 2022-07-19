@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>style</title>
+    <script src="https://lib.baomitu.com/jquery/3.6.0/jquery.js"></script>
+    <!-- 1、导入mapbox依赖包 -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <!-- 2、导入token -->
+    <script src="./config/token.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <select id="select">
+        <option value="streets-v11">街景</option>
+        <option value="dark-v10">黑夜</option>
+        <option value="satellite-v9">卫星</option>
+    </select>
+    <div id="map"></div>
+    <script>
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/navigation-day-v1'
+        })
+        // setTimeout(()=>{
+        //     map.setStyle('mapbox://styles/mapbox/satellite-v9')
+        // },2000)
+        $('#select').change(function(e){
+            let value = e.target.value;
+            console.log(value)
+            map.setStyle(`mapbox://styles/mapbox/${value}`)
+        })
+    </script>
+</body>
+</html>

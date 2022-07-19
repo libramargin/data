@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 1、导入mapbox依赖包 -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <!-- 2、导入token -->
+    <script src="./config/token.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        // 实例化地图容器
+        const map = new mapboxgl.Map({
+            container: 'map', // ol中target
+            style: 'mapbox://styles/mapbox/light-v10', // ol中layers
+            center: [114, 30],
+            zoom: 1,
+            projection: 'globe'
+        })
+        // 设置大气层及星空
+        map.on('style.load', ()=>{
+            map.setFog({
+                color: 'skyblue',
+                'high-color': 'blue',
+                'space-color': '#333'
+            })
+        })
+        // flyTo 2s后飞行到指定地点
+        setTimeout(()=>{
+            map.flyTo({
+                center: [112.93, 28.23],
+                zoom: 8,
+                pitch: 90, // 调整视角
+                speed: 0.2, // 飞行速度
+            })
+        },2000)
+    </script>
+</body>
+</html>

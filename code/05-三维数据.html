@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三维数据</title>
+    <!-- 1、导入mapbox依赖包 -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+    <!-- 2、导入token -->
+    <script src="./config/token.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        const map = new mapboxgl.Map({
+            container: 'map',
+            zoom: 13,
+            center: [105.97, 31.75],
+            pitch: 80,
+            style: 'mapbox://styles/mapbox/satellite-streets-v11'
+        })
+        map.on('load', function(){
+            map.addSource('mapbox-dem', {
+                type: 'raster-dem',
+                url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                tileSize: 512,
+                maxZoom: 14,
+            })
+            map.setTerrain({
+                source: 'mapbox-dem',
+                exaggeration: 2,
+            })
+            map.setFog({
+                color: 'skyblue'
+            })
+        })
+    </script>
+</body>
+</html>
