@@ -1,0 +1,517 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>ArcGIS API for JavaScript Tutorials: Display a map</title>
+
+    <style>
+        html,
+        body,
+        html,
+        body,
+        #viewDiv {
+        	padding: 0;
+        	margin: 0;
+        	height: 100%;
+        	width: 50%;
+        	position: fixed;
+        	right: 0px;
+        }
+        
+        #viewDiv2{
+        	padding: 0;
+        	margin: 0;
+        	height: 100%;
+        	width: 50%;
+        	position: fixed;
+        	left: 0px;
+        }
+        
+        #map3{
+        	padding: 0;
+        	margin: 0;
+        	height: 100%;
+        	width: 50%;
+        	position: fixed;
+        	right: 0px;
+        	z-index: -1;
+        }
+        
+        #layerToggle {
+                top: 20px;
+                left: 20px;
+                position: fixed;
+                z-index: 99;
+                background-color: white;
+                border-radius: 8px;
+                padding: 10px;
+                opacity: 0.75;
+              }
+        #layerToggle2 {
+                top: 200px;
+                left: 20px;
+                position: fixed;
+                z-index: 99;
+                background-color: white;
+                border-radius: 8px;
+                padding: 10px;
+                opacity: 0.75;
+              }
+        #coordinate2 {
+        	position: absolute;
+        	left: 20px;
+        	bottom: 20px;
+        	z-index: 99;
+        	background-color: white;
+        	border-radius: 8px;
+        	padding: 10px;
+        	opacity: 0.75;
+        }
+        #coordinate1{
+        	position: absolute;
+        	right: 20px;
+        	bottom: 20px;
+        	z-index: 99;
+        	background-color: white;
+        	border-radius: 8px;
+        	padding: 10px;
+        	opacity: 0.75;
+        }
+        #scalebar{
+        	position: absolute;
+        	left: 20px;
+        	bottom: 60px;
+        	z-index: 99;
+        	background-color: white;
+        	border-radius: 8px;
+        	padding: 10px;
+        	opacity: 0.75;
+        }
+        /* 垂直分割线 */
+        .vertical_line{
+        	position: absolute;
+        	right: 25%;
+        	top: 0%;
+        	bottom: 0%;
+        	z-index: 5;
+        	float: left;
+        	width: 5px;
+        	background-color: rgba(255,255,255,0.75);
+        	user-select: none;
+        }
+		#boxb{
+			position: absolute;
+			left: 90px;
+			top: 20px;
+			z-index: 10;
+			background-color: beige;
+			opacity: 0.8;
+			font-size: 5px;
+		}
+        .box-item{
+			height: 80px;
+			line-height: 50px;
+			z-index: 10;
+		}
+		.box-item img{
+			width: 90px;
+			vertical-align: middle;
+		}
+        ul{
+			display: none;
+			width: 100%;
+			list-style: none;
+		}
+		li{
+			height: 90px;
+			line-height: 30px;
+		}
+		li:hover{
+			background-color: bisque;
+			width: -webkit-max-content;
+		}
+		li img{
+			width:90px;
+			vertical-align: middle;
+		}
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.19/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.19/"></script>
+
+    <script>
+        require([
+            "esri/Map",
+            "esri/views/SceneView",
+            "esri/views/MapView",
+            "esri/Graphic",
+            "esri/core/watchUtils", 
+            "esri/layers/FeatureLayer",
+            "esri/layers/TileLayer",
+            "esri/geometry/support/webMercatorUtils",
+            'dojo/dom-style',
+            "esri/config",
+			"esri/layers/GeoJSONLayer",
+			"esri/renderers/visualVariables/ColorVariable",
+			"esri/symbols/SimpleFillSymbol"], function (Map, SceneView, MapView, Graphic, watchUtils, FeatureLayer, TileLayer, webMercatorUtils, EsriDomStyle, esriConfig, GeoJSONLayer, ColorVariable, SimpleFillSymbol) {
+
+                esriConfig.apiKey = "AAPK56e3ac027f044c4089d8ceec232fc05dYaOuzVRzm8tMRqvzOvDvIEevbqJ85yppn9PacU6cy4duurJrVK9wo_8BcWO8i8bi";
+
+                //创建一个作为2D主视图
+                var map2d = new Map({
+                	basemap: "oceans"//topo-vector,satellite,oceans,osm,gray-vector,dark-gray-vector,streets-vector
+                });
+                
+                var view = new MapView({
+                	map: map2d,
+                	center:[112, 35.027],
+                	zoom: 5,
+                	container: "viewDiv2"
+                });
+                
+                //地震图层
+                var Earthquakes = new FeatureLayer({
+                	url: "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Earthquakes_Since1970/FeatureServer",
+                	id: "earthquakes",
+                	visible: false
+                });
+                //街道图层
+                var transportationLayer = new TileLayer({
+                          url: "https://server.arcgisonline.com/arcgis/rest/services/Reference/World_Transportation/MapServer",
+                          // This property can be used to uniquely identify the layer
+                          id: "streets",
+                          visible: false
+                        });
+				//中国人口图层
+				const JSONlayer = new GeoJSONLayer({
+					url: "https://cxqttkl.github.io/web4gis15/china.geojson",
+					copyright: "Population",
+					visible: false,
+					
+				});
+				JSONlayer.outFields = ["*"];
+                map2d.add(Earthquakes);
+                map2d.add(transportationLayer);
+				map2d.add(JSONlayer);
+                view.ui.components = [];
+                
+				//量化中国人口图层
+				const sms = new SimpleFillSymbol({
+				            //type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+				              //color: [ 51,51, 204, 0.9 ],
+				              //style: "solid",
+				              outline: {  // autocasts as new SimpleLineSymbol()
+				                color: "white",
+				                width: 1
+				              },
+							  
+				          });
+				const renderer = {
+				          type: "simple", // autocasts as new SimpleRenderer()
+				          symbol: sms,
+				          label: "Population",
+				          visualVariables: [
+				            {
+				              type: "color",
+				              valueExpression: "$feature.pop2000",
+				                valueExpressionTitle: "Population",
+				                stops: [
+									{ value: 10000000, color: "#ebb698" },
+								  { value: 100000000, color: "#3900b3" }
+				                ]
+				            }
+				          ]
+				        };
+				JSONlayer.renderer = renderer;
+                //专题地图选择
+                const streetsLayerToggle = document.getElementById("streetLayer");
+                streetsLayerToggle.addEventListener("change", () => {
+                	transportationLayer.visible = streetsLayerToggle.checked;
+                });
+                const earthquakeLayerToggle = document.getElementById("earthquakeLayer");
+                earthquakeLayerToggle.addEventListener("change", () => {
+                	Earthquakes.visible = earthquakeLayerToggle.checked;
+                });
+				const populationLayerToggle = document.getElementById("chinaPopulationLayer");
+				populationLayerToggle.addEventListener("change", () => {
+					JSONlayer.visible = populationLayerToggle.checked;
+				});
+				
+                //底图选择
+                const darkToggle = document.getElementById("dark-gray-vector");
+                darkToggle.addEventListener("change", () => {
+                	map2d.basemap = "dark-gray-vector";
+                });
+                const streetsToggle = document.getElementById("streets-vector");
+                streetsToggle.addEventListener("change", () => {
+                	map2d.basemap = "streets-vector";
+                });
+                const topoToggle = document.getElementById("topo-vector");
+                topoToggle.addEventListener("change", () => {
+                	map2d.basemap = "topo-vector";
+                });
+                const satelliteToggle = document.getElementById("satellite");
+                satelliteToggle.addEventListener("change", () => {
+                	map2d.basemap = "satellite";
+                });
+                const oceansToggle = document.getElementById("oceans");
+                oceansToggle.addEventListener("change", () => {
+                	map2d.basemap = "oceans";
+                });
+                const osmToggle = document.getElementById("osm");
+                osmToggle.addEventListener("change", () => {
+                	map2d.basemap = "osm";
+                });
+                
+                // 创建一个地图3D主视图
+                var mainMap = new Map({
+                  basemap: "osm",
+                });
+                // 建立一个三维视图显示3D Map实例
+                var mainView = new SceneView({
+                  container: "viewDiv",  //将三维地图放进对应div中
+                  map: mainMap,
+                  center:[112, 35.027],
+                  zoom: 5
+                });
+                mainView.ui.components = [];
+                //创建一个卷帘图层
+                var esriContainerDiv = 'viewDiv';
+                var esriSwipeContainerDiv = 'map3';
+                var map3 = new Map({
+                	basemap: "arcgis-streets"
+                });
+                var view3 = new SceneView({
+                	container: "map3",  //将三维地图放进对应div中
+                	map: map3,
+                	center:[112, 35.027],
+                	zoom: 5
+                });
+                view3.ui.components = [];
+                
+				//图片选择底图
+				const boxclick = document.getElementById("boxb");
+				boxclick.addEventListener("click", function(e){
+					const ul = document.querySelector("ul");
+					//点击下拉框显示并阻止冒泡,防止触发document上写的隐藏下拉框函数
+					const boxContent = document.querySelector(".box-item");
+					var e = e || window.event;
+					ul.style.display = "block";
+					e.stopPropagation();
+					//选择选项替换原有内容，并隐藏
+					var li = document.querySelectorAll("li");
+					for(var i=0;i<li.length;i++){
+						li[i].onclick=function(e){
+							boxContent.innerHTML =this.innerHTML;
+							ul.style.display = "none";
+							//alert(e.target.id);
+							map3.basemap = e.target.id ;
+						}
+					}
+					//点击document隐藏下拉框  选择框显示但不做选择时点击页面选择框隐藏
+					document.onclick = function() {
+						ul.style.display = "none";
+					}
+				});
+				
+                // 窗口联动1
+                // view.on(["pointer-down", "pointer-move"], function() {
+                // 		mainView.center = view.center;
+                // 	});
+                // mainView.on(["pointer-down", "pointer-move"], function() {
+                // 	view.center=mainView.center;
+                // });
+                // view.watch("stationary", function(){
+                // 	mainView.viewpoint = view.viewpoint;
+                // });
+                // mainView.watch("stationary", function(){
+                // 	view.viewpoint = mainView.viewpoint;
+                // });
+                
+                // 窗口联动方法2
+                const views = [view, mainView, view3];
+                let active;
+                const sync = (source) => {
+                    if (!active || !active.viewpoint || active !== source) {
+                        return;
+                		}
+                
+                    for (const view of views) {
+                        if (view !== active) {
+                            view.viewpoint = active.viewpoint;
+                            }
+                        }
+                	};
+                for (const view of views) {
+                	view.watch(["interacting", "animation"], () => {
+                		active = view;
+                		sync(active);
+                	});
+                	view.watch("viewpoint", () => sync(view));
+                }
+                
+                //显示坐标
+                view.on("pointer-move", function(evt){
+                	var coord = view.toMap({x: evt.x, y: evt.y});
+                	document.getElementById("coordinate2").innerHTML = "lng/lat:" + coord.longitude.toFixed(2) + "," + coord.latitude.toFixed(2);
+                });
+                // mainView.on("pointer-move", function(event){
+                // 	var coord1 = view.toMap({x: event.x, y: event.y});
+                // 	document.getElementById("coordinate1").innerHTML = "lng/lat:" + coord1.longitude.toFixed(2) + "," + coord1.latitude.toFixed(2);
+                // });
+                
+                //比例尺
+                view.watch("extent", function(evt){
+                	document.getElementById("scalebar").innerHTML = "scale：1:" + Math.round(view.scale);
+                });
+                
+                //显示图层数量
+                const layerToggle2 = document.getElementById("layerToggle2");
+                layerToggle2.addEventListener("click", () => {
+                	var inputs = document.getElementsByName("box");
+                	//循环给input绑定点击事件
+                	var total = 0;
+                	for (var j=0;j<inputs.length;j++){
+                		if(eval("inputs[" + j + "].checked") == true){
+                			total = total+1;
+                		}	
+                	}
+                	document.getElementById("count").innerHTML = "(共显示" + total + "个图层)";
+                });
+                
+                //删除图层
+                deleteearthlayer.addEventListener("click", () => {
+                	document.getElementById("dizhen").innerHTML = "";
+					Earthquakes.visible = false;
+                });
+                deletestreetlayer.addEventListener("click", () => {
+                	document.getElementById("jiedao").innerHTML = "";
+					transportationLayer.visible = false;
+                });
+				deletechinalayer.addEventListener("click", () => {
+					document.getElementById("china").innerHTML = "";
+					JSONlayer.visible = false;
+				});
+                
+                //分割线移动状态
+                var isSlitLineDragging = false;
+                document.getElementById("vertical_line").onmousedown = function() {
+                	isSlitLineDragging = true;
+                };
+                document.getElementById("vertical_line").onmouseup = function() {
+                	isSlitLineDragging = false;
+                };
+                //分割线移动事件param {Object} e 分割线移动事件对象
+                function pointMove(e) {
+                	e.stopPropagation();
+                	updateMapSwipeLocation(e.x)
+                };
+                //更新卷帘地图容器展开位置@param {Number} location 当前的位置, @param {Boolean} isInit 是否是初始化
+                function updateMapSwipeLocation(location, isInit) {
+                	const swipeMap = document.getElementById(esriSwipeContainerDiv).getBoundingClientRect();
+                	const offsetX = location;
+                	if (isSlitLineDragging || isInit) {
+                		EsriDomStyle.set(esriSwipeContainerDiv, "z-index", "1");
+                		EsriDomStyle.set(esriSwipeContainerDiv, 'clip', 'rect(0px,' + offsetX + 'px, ' + swipeMap.height + 'px,0px)');
+                		EsriDomStyle.set('vertical_line', 'left', (offsetX - 20 + (swipeMap.width * 0.024)) + 'px ');
+                	}
+                };
+                //同步两个视图容器入口函数
+                function synchronizeViews(views) {
+                	let handles = views.map(function(view, idx, views) {
+                		const others = views.concat();
+                		others.splice(idx, 1);
+                		return synchronizeViews(view, others);
+                	});
+                	return {
+                		remove: function() {
+                			this.remove = function() {}
+                			handles.forEach(function(h) {
+                				h.remove();
+                			});
+                			handles = null;
+                		}
+                	}
+                }
+                mainView.on("pointer-move", (e) => {
+                	pointMove(e);
+                	var coord1 = view.toMap({x: event.x, y: event.y});
+                	document.getElementById("coordinate1").innerHTML = "lng/lat:" + coord1.longitude.toFixed(2) + "," + coord1.latitude.toFixed(2);
+                });
+                view3.on("pointer-move", (e) => {
+                	pointMove(e);
+                	var coord1 = view.toMap({x: event.x, y: event.y});
+                	document.getElementById("coordinate1").innerHTML = "lng/lat:" + coord1.longitude.toFixed(2) + "," + coord1.latitude.toFixed(2);
+                });
+                //设置初始位置
+                const swipeMap = document.getElementById(esriSwipeContainerDiv).getBoundingClientRect();
+                updateMapSwipeLocation(swipeMap.width * 0.5, true);
+                
+            });
+    </script>
+
+</head>
+
+<body>
+		<div id="viewDiv">
+			<label id="coordinate1" style="font-size:10px;"></label>
+		</div>
+		<div id="map3"></div>
+		<div id="viewDiv2">
+			<label id="coordinate2" style="font-size:10px;"></label>
+			<div id="scalebar" style="font-size:10px;"></div>
+		</div>
+		<div id="swipe_split_box">
+			<div id="vertical_line" class="vertical_line"></div>
+		</div>
+		<div id = "boxb" class="box">
+			<div class="box-item">
+			<img src="D:\GIS3\联动2\img\arcgis-streets.jpg"/>默认底图
+			</div>
+			<ul>
+				<li id="arcgis-streets">
+					<img src="D:\GIS3\联动2\img\arcgis-streets.jpg" />arcgis-streets
+				</li>
+				<li id="arcgis-navigation-night">
+					<img src="D:\GIS3\联动2\img\arcgis-navigation-night.jpg" />arcgis-navigation-night
+				</li>
+				<li id="arcgis-topographic">
+					<img src="D:\GIS3\联动2\img\arcgis-topographic.jpg" />arcgis-topographic
+				</li>
+				<li id="arcgis-community">
+					<img src="D:\GIS3\联动2\img\arcgis-community.jpg" />arcgis-community
+				</li>
+			</ul>
+		</div>
+		<span id="layerToggle" style="font-size:10px;">底图选择<br>
+			<input type="radio" name="basemap" value="1" id="dark-gray-vector"/> dark-gray-vector <br>
+			<input type="radio" name="basemap" value="1" id="streets-vector"/> streets-vector <br>
+			<input type="radio" name="basemap" value="1" id="topo-vector" /> topo-vector <br>
+			<input type="radio" name="basemap" value="1" id="satellite"/> satellite <br>
+			<input type="radio" name="basemap" value="1" id="oceans" checked="checked"/> oceans <br>
+			<input type="radio" name="basemap" value="1" id="osm"/> osm <br>
+		</span>
+		<div id="layerToggle2" style="font-size:10px;">专题地图
+			<label id="count">(共显示0个图层)</label><br>
+			
+			<div id="dizhen">
+				<input type="button" value="删除" id="deleteearthlayer"/>
+				<input type="checkbox" name="box" id="earthquakeLayer"/> Earthquakes <br>
+			</div>
+			
+			<div id="jiedao">
+				<input type="button" value="删除" id="deletestreetlayer"/>
+				<input type="checkbox" name="box" id="streetLayer"/> Street <br>
+			</div>
+			
+			<div id="china">
+				<input type="button" value="删除" id="deletechinalayer"/>
+				<input type="checkbox" name="box" id="chinaPopulationLayer"/> Population <br>
+			</div>
+			
+		</div>
+		
+	</body>
+
+</html>
