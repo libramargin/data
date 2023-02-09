@@ -1,0 +1,97 @@
+html,
+body,
+#viewDiv {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 50%;
+	position: fixed;
+	right: 0px;
+}
+
+#viewDiv2{
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 50%;
+	position: fixed;
+	left: 0px;
+}
+
+#map3{
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 50%;
+	position: fixed;
+	right: 0px;
+	z-index: -1;
+}
+
+#layerToggle {
+        top: 20px;
+        left: 20px;
+        position: fixed;
+        z-index: 99;
+        background-color: white;
+        border-radius: 8px;
+        padding: 10px;
+        opacity: 0.75;
+      }
+#layerToggle2 {
+        top: 200px;
+        left: 20px;
+        position: fixed;
+        z-index: 99;
+        background-color: white;
+        border-radius: 8px;
+        padding: 10px;
+        opacity: 0.75;
+      }
+#coordinate2 {
+	position: absolute;
+	left: 20px;
+	bottom: 20px;
+	z-index: 99;
+	background-color: white;
+	border-radius: 8px;
+	padding: 10px;
+	opacity: 0.75;
+}
+#coordinate1{
+	position: absolute;
+	right: 20px;
+	bottom: 20px;
+	z-index: 99;
+	background-color: white;
+	border-radius: 8px;
+	padding: 10px;
+	opacity: 0.75;
+}
+#scalebar{
+	position: absolute;
+	left: 20px;
+	bottom: 60px;
+	z-index: 99;
+	background-color: white;
+	border-radius: 8px;
+	padding: 10px;
+	opacity: 0.75;
+}
+/* 垂直分割线 */
+.vertical_line{
+	position: absolute;
+	right: 25%;
+	top: 0%;
+	bottom: 0%;
+	z-index: 5;
+	float: left;
+	width: 5px;
+	background-color: rgba(255,255,255,0.75);
+	user-select: none;
+}
+#basemapselect{
+	position: absolute;
+	right: 100px;
+	top: 20px;
+}
